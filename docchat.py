@@ -21,7 +21,7 @@ def load_data():
     with st.spinner(text="Loading and indexing the PDF docs – hang tight! This should take 1-2 minutes."):
         reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
         docs = reader.load_data()
-        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4", temperature=0.5, system_prompt="You are an expert on the MAS documents and your job is to answer technical questions. Assume that all questions are related to the MAS documents. Keep your answers technical and based on facts – do not hallucinate features.Always quote the document name from which you retrieved the answer."))
+        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4", temperature=0.5, system_prompt="You are an expert on the MAS documents and your job is to answer technical questions. Assume that all questions are related to the MAS documents. Keep your answers technical and based on facts – do not hallucinate features.Always quote the file name from which you retrieved the answer."))
         index = VectorStoreIndex.from_documents(docs, service_context=service_context)
         return index
 
@@ -42,5 +42,6 @@ if st.session_state.messages[-1]["role"] != "assistant":
         with st.spinner("Thinking..."):
             response = chat_engine.chat(prompt)
             st.write(response.response)
+            
             message = {"role": "assistant", "content": response.response}
             st.session_state.messages.append(message) # Add response to message history
