@@ -6,24 +6,22 @@ from llama_index import SimpleDirectoryReader
 
 st.set_page_config(page_title="Chat with the Streamlit docs, powered by LlamaIndex", page_icon="🦙", layout="centered", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = st.secrets.openai_key
-st.title("Chat with the PDF docs, powered by LlamaIndex 💬🦙")
+st.title("Chat with the PDF docs")
       
 if "messages" not in st.session_state.keys(): # Initialize the chat messages history
     st.session_state.messages = [
-        {"role": "assistant", "content": "Ask me a question about the MAS PDF documents!
-         <br>
-         1. MAS FINANCIAL ADVISERS ACT 2001<br>
-         2. FINANCIAL ADVISERS REGULATIONS<br>
-         3. INSURANCE (INTERMEDIARIES) REGULATIONS<br>
-         4. FINANCIAL ADVISERS (COMPLAINTS HANDLING AND RESOLUTION) REGULATIONS 2021"}
-    ]
+        {"role": "assistant", "content": "Ask me a question from the above documents!"}]
+st.write(" 1. MAS FINANCIAL ADVISERS ACT 2001\n")
+st.write(" 2. FINANCIAL ADVISERS REGULATIONS\n")
+st.write(" 3. INSURANCE (INTERMEDIARIES) REGULATIONS\n")
+st.write(" 4. FINANCIAL ADVISERS (COMPLAINTS HANDLING AND RESOLUTION) REGULATIONS 2021\n")
 
 @st.cache_resource(show_spinner=False)
 def load_data():
-    with st.spinner(text="Loading and indexing the Streamlit docs – hang tight! This should take 1-2 minutes."):
+    with st.spinner(text="Loading and indexing the PDF docs – hang tight! This should take 1-2 minutes."):
         reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
         docs = reader.load_data()
-        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5, system_prompt="You are an expert on the Streamlit Python library and your job is to answer technical questions. Assume that all questions are related to the Streamlit Python library. Keep your answers technical and based on facts – do not hallucinate features."))
+        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-4", temperature=0.5, system_prompt="You are an expert on the MAS documents and your job is to answer technical questions. Assume that all questions are related to the MAS documents. Keep your answers technical and based on facts – do not hallucinate features.Always quote the document name from which you retrieved the answer."))
         index = VectorStoreIndex.from_documents(docs, service_context=service_context)
         return index
 
